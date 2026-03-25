@@ -265,18 +265,53 @@
       flex: 0 0 28px;
       border-radius: 50%;
       position: relative;
-      border: 1px solid rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.24);
       background:
-        radial-gradient(circle at center, #2b1824 0 18%, transparent 18% 100%),
+        radial-gradient(circle at center, rgba(255, 217, 234, 0.95) 0 12%, transparent 12% 100%),
         repeating-radial-gradient(
           circle at center,
-          #1a1017 0 2px,
-          #24121d 2px 4px,
-          #120b12 4px 6px
+          #fff4fa 0 2px,
+          #f6dce8 2px 4px,
+          #eec5d8 4px 6px,
+          #f9ecf4 6px 8px
         );
       box-shadow:
-        0 0 14px rgba(255,183,213,0.10),
-        inset 0 0 10px rgba(255,255,255,0.03);
+        0 0 14px rgba(255,183,213,0.18),
+        inset 0 0 10px rgba(255,255,255,0.22);
+      overflow: hidden;
+    }
+
+    .music-disc::before {
+      content: "";
+      position: absolute;
+      inset: 2px;
+      border-radius: 50%;
+      background:
+        conic-gradient(
+          from 0deg,
+          rgba(255,255,255,0.95) 0deg 28deg,
+          rgba(255,220,235,0.18) 28deg 90deg,
+          rgba(255,255,255,0.82) 90deg 118deg,
+          rgba(255,220,235,0.14) 118deg 210deg,
+          rgba(255,255,255,0.9) 210deg 238deg,
+          rgba(255,220,235,0.16) 238deg 360deg
+        );
+      mix-blend-mode: screen;
+      opacity: 0.95;
+    }
+
+    .music-disc::after {
+      content: "";
+      position: absolute;
+      top: 4px;
+      left: 50%;
+      width: 4px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.95);
+      transform: translateX(-50%);
+      box-shadow: 0 0 10px rgba(255,255,255,0.5);
+      z-index: 2;
     }
 
     .music-disc-center {
@@ -289,6 +324,7 @@
       background: linear-gradient(135deg, var(--pink-soft), var(--rose));
       transform: translate(-50%, -50%);
       box-shadow: 0 0 8px rgba(255,183,213,0.30);
+      z-index: 3;
     }
 
     .music-disc.is-playing {
@@ -1086,10 +1122,12 @@
     .lightbox-content {
       position: relative;
       width: min(1100px, 100%);
+      max-width: 100%;
       max-height: 90vh;
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 0 56px;
     }
 
     .lightbox-image-wrap {
@@ -1118,11 +1156,11 @@
     }
 
     .lightbox-btn.prev {
-      left: -18px;
+      left: 0;
     }
 
     .lightbox-btn.next {
-      right: -18px;
+      right: 0;
     }
 
     .lightbox-close {
@@ -1179,12 +1217,16 @@
         grid-template-columns: 1fr;
       }
 
+      .lightbox-content {
+        padding: 0 48px;
+      }
+
       .lightbox-btn.prev {
-        left: 8px;
+        left: 0;
       }
 
       .lightbox-btn.next {
-        right: 8px;
+        right: 0;
       }
     }
 
@@ -1220,6 +1262,12 @@
         width: 24px;
         height: 24px;
         flex-basis: 24px;
+      }
+
+      .music-disc::after {
+        top: 3px;
+        width: 3px;
+        height: 7px;
       }
 
       .music-disc-center {
@@ -1297,7 +1345,24 @@
       }
 
       .lightbox {
-        padding: 16px;
+        padding: 12px;
+      }
+
+      .lightbox-content {
+        width: 100%;
+        max-width: 100%;
+        padding: 44px 0 0;
+        align-items: flex-start;
+      }
+
+      .lightbox-image-wrap {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 20px;
+      }
+
+      .lightbox-image {
+        max-height: calc(100vh - 120px);
       }
 
       .lightbox-btn,
@@ -1307,7 +1372,23 @@
       }
 
       .lightbox-btn {
+        top: auto;
+        bottom: 12px;
+        transform: none;
         font-size: 1.2rem;
+      }
+
+      .lightbox-btn.prev {
+        left: 12px;
+      }
+
+      .lightbox-btn.next {
+        right: 12px;
+      }
+
+      .lightbox-close {
+        top: 0;
+        right: 0;
       }
 
       .resume-frame {
@@ -1329,6 +1410,36 @@
 
       .music-toggle-btn {
         padding: 7px 9px;
+      }
+
+      .lightbox {
+        padding: 10px;
+      }
+
+      .lightbox-content {
+        padding-top: 46px;
+      }
+
+      .lightbox-image-wrap {
+        border-radius: 18px;
+      }
+
+      .lightbox-btn,
+      .lightbox-close {
+        width: 40px;
+        height: 40px;
+      }
+
+      .lightbox-btn.prev {
+        left: 8px;
+      }
+
+      .lightbox-btn.next {
+        right: 8px;
+      }
+
+      .lightbox-btn {
+        bottom: 8px;
       }
     }
   </style>
@@ -1408,8 +1519,8 @@
           </div>
 
           <h1>
-            Eu crio
-            <span class="gradient-text">experiências digitais</span>
+            Eu faço
+            <span class="gradient-text">das suas ideias experiências digitais</span>
             que parecem vivas.
           </h1>
 
@@ -1419,7 +1530,7 @@
 
           <div class="hero-actions">
             <a class="btn btn-primary" href="#projetos">Ver projetos</a>
-            <a class="btn btn-secondary" href="#contato">Falar comigo</a>
+            <a class="btn btn-secondary" href="#contato">Entre em contato</a>
           </div>
 
           <div class="highlight-grid">
