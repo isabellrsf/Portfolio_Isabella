@@ -28,12 +28,14 @@
       --radius-lg: 24px;
       --radius-md: 18px;
       --max: 1200px;
+      --phone-max: 430px;
     }
 
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
 
     html {
@@ -66,6 +68,7 @@
 
     body.no-scroll {
       overflow: hidden;
+      touch-action: none;
     }
 
     #starfield {
@@ -120,6 +123,12 @@
       font: inherit;
     }
 
+    .site-shell {
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
     .container {
       width: min(calc(100% - 32px), var(--max));
       margin: 0 auto;
@@ -158,6 +167,7 @@
       display: flex;
       align-items: center;
       gap: 14px;
+      min-width: 0;
     }
 
     .logo {
@@ -197,6 +207,10 @@
       z-index: 1;
     }
 
+    .brand-text {
+      min-width: 0;
+    }
+
     .brand-text strong {
       display: block;
       font-size: 1rem;
@@ -215,6 +229,7 @@
       gap: 22px;
       color: var(--soft);
       font-size: 0.95rem;
+      flex-wrap: wrap;
     }
 
     .nav-links a:hover {
@@ -494,7 +509,7 @@
     .preview-shell,
     .tech-chip,
     .resume-panel,
-    .toast {
+    .email-popup {
       border: 1px solid var(--border);
       background: var(--surface);
       backdrop-filter: blur(16px);
@@ -755,12 +770,14 @@
       border: 1px solid var(--border);
       background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
       margin-bottom: 20px;
+      touch-action: pan-y;
     }
 
     .project-track {
       display: flex;
       height: 100%;
       transition: transform 0.45s ease;
+      will-change: transform;
     }
 
     .project-slide {
@@ -769,6 +786,7 @@
       position: relative;
       background: rgba(255,255,255,0.03);
       cursor: zoom-in;
+      overflow: hidden;
     }
 
     .project-slide img {
@@ -776,6 +794,8 @@
       height: 100%;
       object-fit: cover;
       display: block;
+      user-select: none;
+      -webkit-user-drag: none;
     }
 
     .project-slide.empty {
@@ -802,7 +822,7 @@
       cursor: pointer;
       backdrop-filter: blur(10px);
       transition: 0.2s ease;
-      z-index: 2;
+      z-index: 3;
     }
 
     .gallery-btn {
@@ -830,6 +850,10 @@
       display: flex;
       gap: 8px;
       z-index: 2;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.12);
+      backdrop-filter: blur(8px);
     }
 
     .gallery-dot {
@@ -865,6 +889,7 @@
       color: rgba(255,255,255,0.92);
       font-weight: 700;
       transition: 0.25s ease;
+      text-align: center;
     }
 
     .project-btn:hover {
@@ -976,6 +1001,7 @@
       border: 1px solid var(--border);
       background: var(--surface);
       box-shadow: var(--shadow);
+      position: relative;
     }
 
     .contact-layout {
@@ -1002,6 +1028,78 @@
     .contact-box:hover {
       transform: translateY(-2px);
       background: rgba(255,255,255,0.10);
+    }
+
+    .email-popup {
+      margin-top: 18px;
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      display: none;
+    }
+
+    .email-popup.open {
+      display: block;
+    }
+
+    .email-popup strong {
+      display: block;
+      margin-bottom: 10px;
+      color: #fff3f8;
+      font-size: 0.98rem;
+    }
+
+    .email-popup-row {
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+      flex-wrap: wrap;
+    }
+
+    .email-field {
+      flex: 1 1 280px;
+      min-width: 0;
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      font: inherit;
+      outline: none;
+      user-select: all;
+      -webkit-user-select: all;
+      -webkit-text-fill-color: #fff;
+    }
+
+    .email-field::selection {
+      background: rgba(255,183,213,0.35);
+      color: #fff;
+    }
+
+    .copy-email-btn {
+      flex: 0 0 auto;
+      padding: 12px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: linear-gradient(135deg, rgba(255,143,189,0.20), rgba(217,184,255,0.18));
+      color: #fff;
+      cursor: pointer;
+      font-weight: 700;
+      transition: 0.25s ease;
+    }
+
+    .copy-email-btn:hover {
+      transform: translateY(-1px);
+      background: linear-gradient(135deg, rgba(255,143,189,0.28), rgba(217,184,255,0.24));
+    }
+
+    .email-popup-note {
+      display: block;
+      margin-top: 10px;
+      color: rgba(255,255,255,0.78);
+      font-size: 0.9rem;
+      line-height: 1.5;
     }
 
     .resume-wrap {
@@ -1102,12 +1200,16 @@
     .lightbox {
       position: fixed;
       inset: 0;
-      background: rgba(7, 5, 9, 0.86);
+      background: rgba(7, 5, 9, 0.88);
       backdrop-filter: blur(12px);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 28px;
+      padding:
+        max(10px, env(safe-area-inset-top))
+        max(10px, env(safe-area-inset-right))
+        max(10px, env(safe-area-inset-bottom))
+        max(10px, env(safe-area-inset-left));
       opacity: 0;
       pointer-events: none;
       transition: 0.28s ease;
@@ -1121,18 +1223,19 @@
 
     .lightbox-content {
       position: relative;
-      width: min(1100px, 100%);
-      max-width: 100%;
-      max-height: 90vh;
+      width: 100%;
+      max-width: min(1100px, 100vw - 20px);
+      max-height: calc(100dvh - 20px);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0 56px;
     }
 
     .lightbox-image-wrap {
-      width: 100%;
-      border-radius: 28px;
+      width: min(100%, 1100px);
+      max-width: 100%;
+      max-height: calc(100dvh - 20px);
+      border-radius: 22px;
       overflow: hidden;
       border: 1px solid rgba(255,255,255,0.12);
       background: rgba(255,255,255,0.04);
@@ -1140,69 +1243,40 @@
     }
 
     .lightbox-image {
-      width: 100%;
-      max-height: 90vh;
-      object-fit: contain;
       display: block;
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      max-height: calc(100dvh - 20px);
+      object-fit: contain;
       background: #0c0910;
     }
 
     .lightbox-btn {
       top: 50%;
       transform: translateY(-50%);
-      width: 52px;
-      height: 52px;
-      font-size: 1.5rem;
+      width: 48px;
+      height: 48px;
+      font-size: 1.35rem;
+      background: rgba(15, 10, 18, 0.72);
     }
 
     .lightbox-btn.prev {
-      left: 0;
+      left: 10px;
     }
 
     .lightbox-btn.next {
-      right: 0;
+      right: 10px;
     }
 
     .lightbox-close {
-      top: 14px;
-      right: 14px;
-      width: 48px;
-      height: 48px;
-      font-size: 1.45rem;
+      top: 10px;
+      right: 10px;
+      width: 44px;
+      height: 44px;
+      font-size: 1.35rem;
       line-height: 1;
-    }
-
-    .toast {
-      position: fixed;
-      top: 88px;
-      right: 24px;
-      min-width: 260px;
-      max-width: 360px;
-      padding: 16px 18px;
-      border-radius: 20px;
-      box-shadow: var(--shadow);
-      opacity: 0;
-      transform: translateY(-10px);
-      pointer-events: none;
-      transition: 0.25s ease;
-      z-index: 99998;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .toast strong {
-      display: block;
-      margin-bottom: 6px;
-      color: #fff3f8;
-    }
-
-    .toast span {
-      color: rgba(255,255,255,0.86);
-      line-height: 1.55;
-      word-break: break-word;
+      background: rgba(15, 10, 18, 0.72);
     }
 
     @media (max-width: 1024px) {
@@ -1215,18 +1289,6 @@
 
       .projects-grid {
         grid-template-columns: 1fr;
-      }
-
-      .lightbox-content {
-        padding: 0 48px;
-      }
-
-      .lightbox-btn.prev {
-        left: 0;
-      }
-
-      .lightbox-btn.next {
-        right: 0;
       }
     }
 
@@ -1252,6 +1314,7 @@
         padding: 7px 8px;
         gap: 8px;
         border-radius: 999px;
+        flex-wrap: wrap;
       }
 
       .music-player-left {
@@ -1344,25 +1407,131 @@
         height: 38px;
       }
 
+      .resume-frame {
+        height: 500px;
+      }
+
+      .email-popup-row {
+        flex-direction: column;
+      }
+
+      .copy-email-btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .site-shell {
+        width: min(100%, var(--phone-max));
+        margin: 0 auto;
+        min-height: 100dvh;
+      }
+
+      header,
+      main,
+      footer {
+        width: 100%;
+      }
+
+      .container {
+        width: calc(100% - 20px);
+      }
+
+      .hero-grid {
+        gap: 24px;
+      }
+
+      .hero {
+        padding-top: 30px;
+        padding-bottom: 28px;
+      }
+
+      .eyebrow {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        font-size: 0.86rem;
+        padding: 10px 14px;
+      }
+
+      h1 {
+        font-size: clamp(1.95rem, 9vw, 2.55rem);
+        line-height: 1.1;
+      }
+
+      .hero p.lead,
+      .card p,
+      .section-heading p,
+      .contact-text {
+        font-size: 0.96rem;
+        line-height: 1.75;
+      }
+
+      .project-gallery {
+        aspect-ratio: 4 / 3;
+        border-radius: 20px;
+      }
+
+      .gallery-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+      }
+
+      .gallery-btn.prev {
+        left: 8px;
+      }
+
+      .gallery-btn.next {
+        right: 8px;
+      }
+
+      .gallery-dots {
+        bottom: 8px;
+        gap: 7px;
+        padding: 5px 8px;
+      }
+
+      .project-card,
+      .card,
+      .skills-panel,
+      .contact-wrap,
+      .preview-shell {
+        border-radius: 24px;
+      }
+
+      .project-card h4 {
+        font-size: 1.25rem;
+      }
+
+      .tech-chip {
+        font-size: 0.88rem;
+      }
+
       .lightbox {
-        padding: 12px;
+        align-items: center;
       }
 
       .lightbox-content {
         width: 100%;
-        max-width: 100%;
-        padding: 44px 0 0;
-        align-items: flex-start;
+        max-width: min(100%, var(--phone-max));
+        max-height: calc(100dvh - 20px);
+        padding-top: 48px;
+        padding-bottom: 56px;
       }
 
       .lightbox-image-wrap {
         width: 100%;
         max-width: 100%;
-        border-radius: 20px;
+        max-height: calc(100dvh - 130px);
+        border-radius: 16px;
       }
 
       .lightbox-image {
-        max-height: calc(100vh - 120px);
+        width: 100%;
+        max-width: 100%;
+        max-height: calc(100dvh - 130px);
+        object-fit: contain;
       }
 
       .lightbox-btn,
@@ -1373,9 +1542,9 @@
 
       .lightbox-btn {
         top: auto;
-        bottom: 12px;
+        bottom: 2px;
         transform: none;
-        font-size: 1.2rem;
+        font-size: 1.15rem;
       }
 
       .lightbox-btn.prev {
@@ -1389,21 +1558,31 @@
       .lightbox-close {
         top: 0;
         right: 0;
+        font-size: 1.2rem;
       }
 
       .resume-frame {
-        height: 500px;
+        height: 420px;
       }
 
-      .toast {
-        right: 14px;
-        left: 14px;
-        min-width: auto;
-        max-width: none;
+      footer {
+        padding-bottom: 28px;
+        font-size: 0.88rem;
       }
     }
 
     @media (max-width: 480px) {
+      .music-player {
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .music-player-left {
+        min-width: 0;
+        flex: 1 1 auto;
+      }
+
       .music-player-text span {
         display: none;
       }
@@ -1412,16 +1591,16 @@
         padding: 7px 9px;
       }
 
-      .lightbox {
-        padding: 10px;
+      .nav {
+        gap: 14px;
       }
 
-      .lightbox-content {
-        padding-top: 46px;
+      .brand {
+        align-items: center;
       }
 
-      .lightbox-image-wrap {
-        border-radius: 18px;
+      .brand-text span {
+        line-height: 1.35;
       }
 
       .lightbox-btn,
@@ -1431,15 +1610,22 @@
       }
 
       .lightbox-btn.prev {
-        left: 8px;
+        left: 10px;
       }
 
       .lightbox-btn.next {
-        right: 8px;
+        right: 10px;
       }
 
-      .lightbox-btn {
-        bottom: 8px;
+      .lightbox-close {
+        top: 0;
+        right: 0;
+      }
+    }
+
+    @media (pointer: coarse) {
+      #cursor-stars {
+        display: none;
       }
     }
   </style>
@@ -1453,11 +1639,6 @@
     Seu navegador não suporta áudio.
   </audio>
 
-  <div class="toast" id="emailToast" aria-live="polite">
-    <strong>Meu e-mail</strong>
-    <span>isa.rodrigues01@hotmail.com</span>
-  </div>
-
   <div class="lightbox" id="lightbox" aria-hidden="true">
     <div class="lightbox-content">
       <button class="lightbox-close" type="button" id="lightboxClose" aria-label="Fechar foto">×</button>
@@ -1469,383 +1650,402 @@
     </div>
   </div>
 
-  <header>
-    <div class="container nav">
-      <div class="brand">
-        <div class="logo photo-logo">
-          <img src="Isabella.jpeg" alt="Foto de Isabella Rodrigues" />
-          <span class="photo-fallback">B</span>
+  <div class="site-shell">
+    <header>
+      <div class="container nav">
+        <div class="brand">
+          <div class="logo photo-logo">
+            <img src="Isabella.jpeg" alt="Foto de Isabella Rodrigues" />
+            <span class="photo-fallback">B</span>
+          </div>
+          <div class="brand-text">
+            <strong>Isabella Rodrigues</strong>
+            <span>Fullstack Developer • Data Analyst • Experiência Digital</span>
+          </div>
         </div>
-        <div class="brand-text">
-          <strong>Isabella Rodrigues</strong>
-          <span>Fullstack Developer • Data Analyst • Experiência Digital</span>
-        </div>
+
+        <nav class="nav-links">
+          <a href="#sobre">Sobre</a>
+          <a href="#projetos">Projetos</a>
+          <a href="#skills">Skills</a>
+          <a href="#contato">Contato</a>
+        </nav>
       </div>
+    </header>
 
-      <nav class="nav-links">
-        <a href="#sobre">Sobre</a>
-        <a href="#projetos">Projetos</a>
-        <a href="#skills">Skills</a>
-        <a href="#contato">Contato</a>
-      </nav>
-    </div>
-  </header>
+    <main>
+      <section class="hero">
+        <div class="blur-orb" style="top: 80px; right: -120px;"></div>
+        <div class="container hero-grid">
+          <div class="reveal show">
+            <div class="music-player">
+              <div class="music-player-left">
+                <div class="music-disc" id="musicDisc">
+                  <div class="music-disc-center"></div>
+                </div>
+                <div class="music-player-text">
+                  <strong>Música</strong>
+                  <span id="musicStatusText">Pronta para tocar</span>
+                </div>
+              </div>
 
-  <main>
-    <section class="hero">
-      <div class="blur-orb" style="top: 80px; right: -120px;"></div>
-      <div class="container hero-grid">
-        <div class="reveal show">
-          <div class="music-player">
-            <div class="music-player-left">
-              <div class="music-disc" id="musicDisc">
-                <div class="music-disc-center"></div>
-              </div>
-              <div class="music-player-text">
-                <strong>Música</strong>
-                <span id="musicStatusText">Pronta para tocar</span>
-              </div>
+              <button class="music-toggle-btn" id="musicToggle" type="button">
+                <span id="musicToggleIcon">▶</span>
+                <span id="musicToggleLabel">Iniciar música</span>
+              </button>
+            </div>
+            <br>
+
+            <div class="eyebrow">
+              <span class="spark"></span>
+              Portfólio de Desenvolvedora Fullstack
             </div>
 
-            <button class="music-toggle-btn" id="musicToggle" type="button">
-              <span id="musicToggleIcon">▶</span>
-              <span id="musicToggleLabel">Iniciar música</span>
-            </button>
-          </div> <br>
+            <h1>
+              Eu faço
+              <span class="gradient-text">das suas ideias experiências digitais</span>
+              que parecem vivas.
+            </h1>
 
-          <div class="eyebrow">
-            <span class="spark"></span>
-            Portfólio de Desenvolvedora Front-End
+            <p class="lead">
+              Sou Isabella Rodrigues, apaixonada por criar sites e sistemas com identidade forte, organização visual e usabilidade real. Gosto de transformar ideias em interfaces impactantes, funcionais e memoráveis.
+            </p>
+
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#projetos">Ver projetos</a>
+              <a class="btn btn-secondary" href="#contato">Entre em contato</a>
+            </div>
+
+            <div class="highlight-grid">
+              <div class="highlight-item"><span class="bullet"></span><span>Interfaces bonitas, organizadas e funcionais</span></div>
+              <div class="highlight-item"><span class="bullet"></span><span>Projetos web com lógica real de negócio</span></div>
+              <div class="highlight-item"><span class="bullet"></span><span>Experiência com sistemas, automações e dashboards</span></div>
+              <div class="highlight-item"><span class="bullet"></span><span>Atenção visual + cuidado com experiência do usuário</span></div>
+            </div>
           </div>
 
-          <h1>
-            Eu faço
-            <span class="gradient-text">das suas ideias experiências digitais</span>
-            que parecem vivas.
-          </h1>
+          <div class="preview-wrap reveal show">
+            <div class="preview-shell">
+              <div class="preview-window">
+                <div class="window-top">
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                  <span class="dot"></span>
+                </div>
+                <div class="preview-body">
+                  <div class="inner-panel">
+                    <div class="mini-label">assinatura visual</div>
+                    <h2>
+                      Design que chama atenção.
+                      <span>Código que entrega.</span>
+                    </h2>
 
-          <p class="lead">
-            Sou Isabella Rodrigues, apaixonada por criar sites e sistemas com identidade forte, organização visual e usabilidade real. Gosto de transformar ideias em interfaces impactantes, funcionais e memoráveis.
-          </p>
-
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="#projetos">Ver projetos</a>
-            <a class="btn btn-secondary" href="#contato">Entre em contato</a>
-          </div>
-
-          <div class="highlight-grid">
-            <div class="highlight-item"><span class="bullet"></span><span>Interfaces bonitas, organizadas e funcionais</span></div>
-            <div class="highlight-item"><span class="bullet"></span><span>Projetos web com lógica real de negócio</span></div>
-            <div class="highlight-item"><span class="bullet"></span><span>Experiência com sistemas, automações e dashboards</span></div>
-            <div class="highlight-item"><span class="bullet"></span><span>Atenção visual + cuidado com experiência do usuário</span></div>
-          </div>
-        </div>
-
-        <div class="preview-wrap reveal show">
-          <div class="preview-shell">
-            <div class="preview-window">
-              <div class="window-top">
-                <span class="dot"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-              </div>
-              <div class="preview-body">
-                <div class="inner-panel">
-                  <div class="mini-label">assinatura visual</div>
-                  <h2>
-                    Design que chama atenção.
-                    <span>Código que entrega.</span>
-                  </h2>
-
-                  <div class="skill-mini-grid">
-                    <div class="skill-box">
-                      <div class="skill-icon">🖥️</div>
-                      <strong>Front-End</strong>
-                    </div>
-                    <div class="skill-box">
-                      <div class="skill-icon">⚙️</div>
-                      <strong>JavaScript</strong>
-                    </div>
-                    <div class="skill-box">
-                      <div class="skill-icon">🗄️</div>
-                      <strong>Banco de Dados</strong>
-                    </div>
-                    <div class="skill-box">
-                      <div class="skill-icon">📱</div>
-                      <strong>Apps Mobile</strong>
+                    <div class="skill-mini-grid">
+                      <div class="skill-box">
+                        <div class="skill-icon">🖥️</div>
+                        <strong>Fullstack</strong>
+                      </div>
+                      <div class="skill-box">
+                        <div class="skill-icon">⚙️</div>
+                        <strong>JavaScript</strong>
+                      </div>
+                      <div class="skill-box">
+                        <div class="skill-icon">🗄️</div>
+                        <strong>Banco de Dados</strong>
+                      </div>
+                      <div class="skill-box">
+                        <div class="skill-icon">📱</div>
+                        <strong>Apps Mobile</strong>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+            <a class="down-link" href="#sobre">↓ Descer</a>
           </div>
-          <a class="down-link" href="#sobre">↓ Descer</a>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="block" id="sobre">
-      <div class="container section-grid">
-        <article class="card reveal">
-          <div class="chip-title">✦ Sobre mim</div>
-          <h3>Criação com impacto visual e lógica real.</h3>
-          <p>
-            Minha principal motivação no front-end é criar sites e sistemas que não sejam apenas bonitos, mas que também façam sentido no uso real. Gosto de trabalhar com estrutura, detalhes visuais, clareza na navegação e soluções que deixem a experiência mais fluida, moderna e profissional.
-          </p>
-        </article>
-
-        <article class="card reveal">
-          <div class="stats-grid">
-            <div class="stat-box">
-              <span>Foco</span>
-              <strong>Front-End</strong>
-            </div>
-            <div class="stat-box">
-              <span>Interesse</span>
-              <strong>Interfaces marcantes</strong>
-            </div>
-            <div class="stat-box">
-              <span>Estilo</span>
-              <strong>Visual + funcionalidade</strong>
-            </div>
-          </div>
-
-          <p>
-            Tenho experiência com desenvolvimento web, sistemas internos, automações ligadas a dados, dashboards e construção de interfaces para diferentes necessidades. Meu trabalho une atenção visual, organização e senso prático para entregar soluções úteis e bem apresentadas.
-          </p>
-        </article>
-      </div>
-    </section>
-
-    <section class="block" id="projetos">
-      <div class="container">
-        <div class="section-heading reveal">
-          <div>
-            <small>Projetos em destaque</small>
-            <h3>Portfólio com presença.</h3>
-          </div>
-          <p>
-            Projetos com foco em experiência digital, organização de informação, lógica de negócio e construção de interfaces com personalidade.
-          </p>
-        </div>
-
-        <div class="projects-grid">
-          <article class="project-card reveal">
-            <div class="project-gallery" data-gallery>
-              <button class="gallery-btn prev" type="button" aria-label="Foto anterior">‹</button>
-              <div class="project-track">
-                <div class="project-slide"><img src="patas_pousada_home.png" alt="Preview do projeto PatasPousadas 1"></div>
-                <div class="project-slide"><img src="patas_pousada_login.png" alt="Preview do projeto PatasPousadas 2"></div>
-                <div class="project-slide"><img src="patas_pousada_reservas.png" alt="Preview do projeto PatasPousadas 3"></div>
-              </div>
-              <button class="gallery-btn next" type="button" aria-label="Próxima foto">›</button>
-              <div class="gallery-dots"></div>
-            </div>
-            <div class="project-head">
-              <span class="project-badge">Full Stack</span>
-              <div class="project-arrow">↗</div>
-            </div>
-            <h4>PatasPousadas</h4>
-            <div class="project-sub">Plataforma de hospedagem para pets</div>
-            <p class="project-desc">
-              Projeto com foco em cadastro, navegação, experiência do usuário e construção de interface para uma plataforma inspirada no modelo de hospedagem por temporada, voltada ao universo pet.
-            </p>
-            <div class="chips">
-              <span class="tech-chip">HTML</span>
-              <span class="tech-chip">CSS</span>
-              <span class="tech-chip">JavaScript</span>
-              <span class="tech-chip">PHP</span>
-              <span class="tech-chip">MySQL</span>
-            </div>
-            <div class="project-actions">
-              <a class="project-btn primary" href="https://patas-pousada.vercel.app/" target="_blank" rel="noopener noreferrer">Acessar</a>
-            </div>
-          </article>
-
-          <article class="project-card reveal">
-            <div class="project-gallery" data-gallery>
-              <button class="gallery-btn prev" type="button" aria-label="Foto anterior">‹</button>
-              <div class="project-track">
-                <div class="project-slide"><img src="pesquisador_planilha_1.png" alt="Preview do projeto Leitor Universal 1"></div>
-                <div class="project-slide"><img src="pesquisador_planilha_2.png" alt="Preview do projeto Leitor Universal 2"></div>
-                <div class="project-slide"><img src="pesquisador_planilha_3.png" alt="Preview do projeto Leitor Universal 3"></div>
-              </div>
-              <button class="gallery-btn next" type="button" aria-label="Próxima foto">›</button>
-              <div class="gallery-dots"></div>
-            </div>
-            <div class="project-head">
-              <span class="project-badge">Web System</span>
-              <div class="project-arrow">↗</div>
-            </div>
-            <h4>Leitor Universal</h4>
-            <div class="project-sub">Sistema web para leitura e busca inteligente em planilhas</div>
-            <p class="project-desc">
-              Ferramenta criada para importar planilhas, localizar informações com rapidez e apoiar fluxos internos com interface clara, filtros úteis e organização visual eficiente.
-            </p>
-            <div class="chips">
-              <span class="tech-chip">HTML</span>
-              <span class="tech-chip">CSS</span>
-              <span class="tech-chip">JavaScript</span>
-            </div>
-            <div class="project-actions">
-              <a class="project-btn" href="#">Link não pode ser compartilhado</a>
-            </div>
-          </article>
-
-          <article class="project-card reveal">
-            <div class="project-gallery" data-gallery>
-              <button class="gallery-btn prev" type="button" aria-label="Foto anterior">‹</button>
-              <div class="project-track">
-                <div class="project-slide"><img src="leitor_de_planilha_1.png" alt="Preview do projeto Gerador de E-mails Jurídicos 1"></div>
-                <div class="project-slide"><img src="leitor_de_planilha_2.png" alt="Preview do projeto Gerador de E-mails Jurídicos 2"></div>
-                <div class="project-slide"><img src="leitor_de_planilha_3.png" alt="Preview do projeto Gerador de E-mails Jurídicos 3"></div>
-              </div>
-              <button class="gallery-btn next" type="button" aria-label="Próxima foto">›</button>
-              <div class="gallery-dots"></div>
-            </div>
-            <div class="project-head">
-              <span class="project-badge">Automation</span>
-              <div class="project-arrow">↗</div>
-            </div>
-            <h4>Gerador de E-mails Jurídicos</h4>
-            <div class="project-sub">Automação de textos e dados com regras de negócio</div>
-            <p class="project-desc">
-              Projeto voltado para transformar dados de planilhas em conteúdos estruturados para e-mail, respeitando lógica condicional, formatação e padronização de informações.
-            </p>
-            <div class="chips">
-              <span class="tech-chip">HTML</span>
-              <span class="tech-chip">CSS</span>
-              <span class="tech-chip">JavaScript</span>
-            </div>
-            <div class="project-actions">
-              <a class="project-btn" href="#">Link não pode ser compartilhado</a>
-            </div>
-          </article>
-
-          <article class="project-card reveal">
-            <div class="project-gallery" data-gallery>
-              <button class="gallery-btn prev" type="button" aria-label="Foto anterior">‹</button>
-              <div class="project-track">
-                <div class="project-slide"><img src="nanababys_1.jpg" alt="Preview do projeto NanaBaby 1"></div>
-                <div class="project-slide"><img src="nanababys_2.jpg" alt="Preview do projeto NanaBaby 2"></div>
-                <div class="project-slide"><img src="nanababys_3.jpg" alt="Preview do projeto NanaBaby 3"></div>
-              </div>
-              <button class="gallery-btn next" type="button" aria-label="Próxima foto">›</button>
-              <div class="gallery-dots"></div>
-            </div>
-            <div class="project-head">
-              <span class="project-badge">Mobile App</span>
-              <div class="project-arrow">↗</div>
-            </div>
-            <h4>NanaBaby</h4>
-            <div class="project-sub">Aplicativo para rotina de sono e alimentação</div>
-            <p class="project-desc">
-              Aplicativo desenvolvido para registrar eventos da rotina do bebê, organizar dados e gerar acompanhamento com foco em praticidade, clareza e boa usabilidade.
-            </p>
-            <div class="chips">
-              <span class="tech-chip">Kotlin</span>
-              <span class="tech-chip">Android Studio</span>
-            </div>
-            <div class="project-actions">
-              <a class="project-btn" href="https://github.com/isabellrsf/NanaBabys?tab=readme-ov-file" target="_blank" rel="noopener noreferrer">Acessar no github</a>
-            </div>
-          </article>
-
-          <article class="project-card reveal">
-            <div class="project-gallery" data-gallery>
-              <button class="gallery-btn prev" type="button" aria-label="Foto anterior">‹</button>
-              <div class="project-track">
-                <div class="project-slide"><img src="convite_casamento_1.png" alt="Preview do projeto Convite de Casamento Interativo 1"></div>
-                <div class="project-slide"><img src="convite_casamento_2.png" alt="Preview do projeto Convite de Casamento Interativo 2"></div>
-                <div class="project-slide"><img src="convite_casamento_3.png" alt="Preview do projeto Convite de Casamento Interativo 3"></div>
-              </div>
-              <button class="gallery-btn next" type="button" aria-label="Próxima foto">›</button>
-              <div class="gallery-dots"></div>
-            </div>
-            <div class="project-head">
-              <span class="project-badge">Interactive Website</span>
-              <div class="project-arrow">↗</div>
-            </div>
-            <h4>Convite de Casamento Interativo</h4>
-            <div class="project-sub">Site interativo para convite e experiência do evento</div>
-            <p class="project-desc">
-              Projeto desenvolvido para apresentar informações do casamento de forma elegante, interativa e emocional, unindo identidade visual, animações e navegação leve em uma experiência especial para os convidados.
-            </p>
-            <div class="chips">
-              <span class="tech-chip">HTML</span>
-              <span class="tech-chip">CSS</span>
-              <span class="tech-chip">JavaScript</span>
-            </div>
-            <div class="project-actions">
-              <a class="project-btn" href="#">Link não pode ser compartilhado</a>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="block" id="skills">
-      <div class="container skills-panel reveal">
-        <div class="skills-layout">
-          <div>
-            <small class="small-top">Stack & habilidades</small>
-            <h3>Tecnologia com estética e intenção.</h3>
+      <section class="block" id="sobre">
+        <div class="container section-grid">
+          <article class="card reveal">
+            <div class="chip-title">✦ Sobre mim</div>
+            <h3>Criação com impacto visual e lógica real.</h3>
             <p>
-              Trabalho com construção de interfaces, estruturação de sistemas web, lógica de navegação, manipulação de dados e experiências digitais pensadas para serem úteis, bonitas e marcantes.
+              Minha principal motivação no front-end é criar sites e sistemas que não sejam apenas bonitos, mas que também façam sentido no uso real. Gosto de trabalhar com estrutura, detalhes visuais, clareza na navegação e soluções que deixem a experiência mais fluida, moderna e profissional.
+            </p>
+          </article>
+
+          <article class="card reveal">
+            <div class="stats-grid">
+              <div class="stat-box">
+                <span>Foco</span>
+                <strong>Front-End ou Fullstack</strong>
+              </div>
+              <div class="stat-box">
+                <span>Interesse</span>
+                <strong>Interfaces marcantes</strong>
+              </div>
+              <div class="stat-box">
+                <span>Estilo</span>
+                <strong>Visual + funcionalidade</strong>
+              </div>
+            </div>
+
+            <p>
+              Tenho experiência com desenvolvimento web, sistemas internos, automações ligadas a dados, dashboards e construção de interfaces para diferentes necessidades. Meu trabalho une atenção visual, organização e senso prático para entregar soluções úteis e bem apresentadas.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="block" id="projetos">
+        <div class="container">
+          <div class="section-heading reveal">
+            <div>
+              <small>Projetos em destaque</small>
+              <h3>Portfólio com presença.</h3>
+            </div>
+            <p>
+              Projetos com foco em experiência digital, organização de informação, lógica de negócio e construção de interfaces com personalidade.
             </p>
           </div>
 
-          <div class="skills-list">
-            <div class="tech-chip">HTML, CSS e JavaScript</div>
-            <div class="tech-chip">PHP e integração com banco de dados</div>
-            <div class="tech-chip">GitHub, publicação e versionamento</div>
-            <div class="tech-chip">Power BI, organização visual e dados</div>
-            <div class="tech-chip">Android Studio e Kotlin</div>
-            <div class="tech-chip">Criação de interfaces responsivas</div>
+          <div class="projects-grid">
+            <article class="project-card reveal">
+              <div class="project-gallery" data-gallery>
+                <button class="gallery-btn prev" type="button" aria-label="Foto anterior">‹</button>
+                <div class="project-track">
+                  <div class="project-slide"><img src="patas_pousada_home.png" alt="Preview do projeto PatasPousadas 1"></div>
+                  <div class="project-slide"><img src="patas_pousada_login.png" alt="Preview do projeto PatasPousadas 2"></div>
+                  <div class="project-slide"><img src="patas_pousada_reservas.png" alt="Preview do projeto PatasPousadas 3"></div>
+                </div>
+                <button class="gallery-btn next" type="button" aria-label="Próxima foto">›</button>
+                <div class="gallery-dots"></div>
+              </div>
+              <div class="project-head">
+                <span class="project-badge">Full Stack</span>
+                <div class="project-arrow">↗</div>
+              </div>
+              <h4>PatasPousadas</h4>
+              <div class="project-sub">Plataforma de hospedagem para pets</div>
+              <p class="project-desc">
+                Projeto com foco em cadastro, navegação, experiência do usuário e construção de interface para uma plataforma inspirada no modelo de hospedagem por temporada, voltada ao universo pet.
+              </p>
+              <div class="chips">
+                <span class="tech-chip">HTML</span>
+                <span class="tech-chip">CSS</span>
+                <span class="tech-chip">JavaScript</span>
+                <span class="tech-chip">PHP</span>
+                <span class="tech-chip">MySQL</span>
+              </div>
+              <div class="project-actions">
+                <a class="project-btn primary" href="https://patas-pousada.vercel.app/" target="_blank" rel="noopener noreferrer">Acessar</a>
+              </div>
+            </article>
+
+            <article class="project-card reveal">
+              <div class="project-gallery" data-gallery>
+                <button class="gallery-btn prev" type="button" aria-label="Foto anterior">‹</button>
+                <div class="project-track">
+                  <div class="project-slide"><img src="pesquisador_planilha_1.png" alt="Preview do projeto Leitor Universal 1"></div>
+                  <div class="project-slide"><img src="pesquisador_planilha_2.png" alt="Preview do projeto Leitor Universal 2"></div>
+                  <div class="project-slide"><img src="pesquisador_planilha_3.png" alt="Preview do projeto Leitor Universal 3"></div>
+                </div>
+                <button class="gallery-btn next" type="button" aria-label="Próxima foto">›</button>
+                <div class="gallery-dots"></div>
+              </div>
+              <div class="project-head">
+                <span class="project-badge">Web System</span>
+                <div class="project-arrow">↗</div>
+              </div>
+              <h4>Leitor Universal</h4>
+              <div class="project-sub">Sistema web para leitura e busca inteligente em planilhas</div>
+              <p class="project-desc">
+                Ferramenta criada para importar planilhas, localizar informações com rapidez e apoiar fluxos internos com interface clara, filtros úteis e organização visual eficiente.
+              </p>
+              <div class="chips">
+                <span class="tech-chip">HTML</span>
+                <span class="tech-chip">CSS</span>
+                <span class="tech-chip">JavaScript</span>
+              </div>
+              <div class="project-actions">
+                <a class="project-btn" href="#">Link não pode ser compartilhado</a>
+              </div>
+            </article>
+
+            <article class="project-card reveal">
+              <div class="project-gallery" data-gallery>
+                <button class="gallery-btn prev" type="button" aria-label="Foto anterior">‹</button>
+                <div class="project-track">
+                  <div class="project-slide"><img src="leitor_de_planilha_1.png" alt="Preview do projeto Gerador de E-mails Jurídicos 1"></div>
+                  <div class="project-slide"><img src="leitor_de_planilha_2.png" alt="Preview do projeto Gerador de E-mails Jurídicos 2"></div>
+                  <div class="project-slide"><img src="leitor_de_planilha_3.png" alt="Preview do projeto Gerador de E-mails Jurídicos 3"></div>
+                </div>
+                <button class="gallery-btn next" type="button" aria-label="Próxima foto">›</button>
+                <div class="gallery-dots"></div>
+              </div>
+              <div class="project-head">
+                <span class="project-badge">Automation</span>
+                <div class="project-arrow">↗</div>
+              </div>
+              <h4>Gerador de E-mails Jurídicos</h4>
+              <div class="project-sub">Automação de textos e dados com regras de negócio</div>
+              <p class="project-desc">
+                Projeto voltado para transformar dados de planilhas em conteúdos estruturados para e-mail, respeitando lógica condicional, formatação e padronização de informações.
+              </p>
+              <div class="chips">
+                <span class="tech-chip">HTML</span>
+                <span class="tech-chip">CSS</span>
+                <span class="tech-chip">JavaScript</span>
+              </div>
+              <div class="project-actions">
+                <a class="project-btn" href="#">Link não pode ser compartilhado</a>
+              </div>
+            </article>
+
+            <article class="project-card reveal">
+              <div class="project-gallery" data-gallery>
+                <button class="gallery-btn prev" type="button" aria-label="Foto anterior">‹</button>
+                <div class="project-track">
+                  <div class="project-slide"><img src="nanababys_1.jpg" alt="Preview do projeto NanaBaby 1"></div>
+                  <div class="project-slide"><img src="nanababys_2.jpg" alt="Preview do projeto NanaBaby 2"></div>
+                  <div class="project-slide"><img src="nanababys_3.jpg" alt="Preview do projeto NanaBaby 3"></div>
+                </div>
+                <button class="gallery-btn next" type="button" aria-label="Próxima foto">›</button>
+                <div class="gallery-dots"></div>
+              </div>
+              <div class="project-head">
+                <span class="project-badge">Mobile App</span>
+                <div class="project-arrow">↗</div>
+              </div>
+              <h4>NanaBaby</h4>
+              <div class="project-sub">Aplicativo para rotina de sono e alimentação</div>
+              <p class="project-desc">
+                Aplicativo desenvolvido para registrar eventos da rotina do bebê, organizar dados e gerar acompanhamento com foco em praticidade, clareza e boa usabilidade.
+              </p>
+              <div class="chips">
+                <span class="tech-chip">Kotlin</span>
+                <span class="tech-chip">Android Studio</span>
+              </div>
+              <div class="project-actions">
+                <a class="project-btn" href="https://github.com/isabellrsf/NanaBabys?tab=readme-ov-file" target="_blank" rel="noopener noreferrer">Acessar no github</a>
+              </div>
+            </article>
+
+            <article class="project-card reveal">
+              <div class="project-gallery" data-gallery>
+                <button class="gallery-btn prev" type="button" aria-label="Foto anterior">‹</button>
+                <div class="project-track">
+                  <div class="project-slide"><img src="convite_casamento_1.png" alt="Preview do projeto Convite de Casamento Interativo 1"></div>
+                  <div class="project-slide"><img src="convite_casamento_2.png" alt="Preview do projeto Convite de Casamento Interativo 2"></div>
+                  <div class="project-slide"><img src="convite_casamento_3.png" alt="Preview do projeto Convite de Casamento Interativo 3"></div>
+                </div>
+                <button class="gallery-btn next" type="button" aria-label="Próxima foto">›</button>
+                <div class="gallery-dots"></div>
+              </div>
+              <div class="project-head">
+                <span class="project-badge">Interactive Website</span>
+                <div class="project-arrow">↗</div>
+              </div>
+              <h4>Convite de Casamento Interativo</h4>
+              <div class="project-sub">Site interativo para convite e experiência do evento</div>
+              <p class="project-desc">
+                Projeto desenvolvido para apresentar informações do casamento de forma elegante, interativa e emocional, unindo identidade visual, animações e navegação leve em uma experiência especial para os convidados.
+              </p>
+              <div class="chips">
+                <span class="tech-chip">HTML</span>
+                <span class="tech-chip">CSS</span>
+                <span class="tech-chip">JavaScript</span>
+              </div>
+              <div class="project-actions">
+                <a class="project-btn" href="#">Link não pode ser compartilhado</a>
+              </div>
+            </article>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="block" id="contato">
-      <div class="container contact-wrap reveal">
-        <div class="contact-layout">
-          <div>
-            <small class="small-top">Contato</small>
-            <div class="contact-title">Vamos criar algo inesquecível.</div>
-            <div class="contact-text">
-              Estou aberta a oportunidades em desenvolvimento front-end, projetos web e experiências digitais que valorizem criatividade, organização e impacto visual.
+      <section class="block" id="skills">
+        <div class="container skills-panel reveal">
+          <div class="skills-layout">
+            <div>
+              <small class="small-top">Stack & habilidades</small>
+              <h3>Tecnologia com estética e intenção.</h3>
+              <p>
+                Trabalho com construção de interfaces, estruturação de sistemas web, lógica de navegação, manipulação de dados e experiências digitais pensadas para serem úteis, bonitas e marcantes.
+              </p>
+            </div>
+
+            <div class="skills-list">
+              <div class="tech-chip">HTML, CSS e JavaScript</div>
+              <div class="tech-chip">PHP e integração com banco de dados</div>
+              <div class="tech-chip">GitHub, publicação e versionamento</div>
+              <div class="tech-chip">Power BI, organização visual e dados</div>
+              <div class="tech-chip">Android Studio e Kotlin</div>
+              <div class="tech-chip">Criação de interfaces responsivas</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="block" id="contato">
+        <div class="container contact-wrap reveal">
+          <div class="contact-layout">
+            <div>
+              <small class="small-top">Contato</small>
+              <div class="contact-title">Vamos criar algo inesquecível.</div>
+              <div class="contact-text">
+                Estou aberta a oportunidades em desenvolvimento front-end ou fullstack, projetos web e experiências digitais que valorizem criatividade, organização e impacto visual.
+              </div>
+            </div>
+
+            <div class="contact-actions">
+              <button class="contact-box" type="button" id="emailButton">✉️ E-mail</button>
+              <a class="contact-box" href="https://github.com/isabellrsf" target="_blank" rel="noopener noreferrer">🐙 GitHub</a>
+              <a class="contact-box" href="https://www.linkedin.com/in/isabella-rodrigues-7486642a7/" target="_blank" rel="noopener noreferrer">💼 LinkedIn</a>
+              <button class="contact-box" type="button" id="resumeToggle">📄 Currículo <span id="resumeToggleSymbol">+</span></button>
             </div>
           </div>
 
-          <div class="contact-actions">
-            <button class="contact-box" type="button" id="emailButton">✉️ E-mail</button>
-            <a class="contact-box" href="https://github.com/isabellrsf" target="_blank" rel="noopener noreferrer">🐙 GitHub</a>
-            <a class="contact-box" href="https://www.linkedin.com/in/isabella-rodrigues-7486642a7/" target="_blank" rel="noopener noreferrer">💼 LinkedIn</a>
-            <button class="contact-box" type="button" id="resumeToggle">📄 Currículo <span id="resumeToggleSymbol">+</span></button>
-          </div>
-        </div>
-
-        <div class="resume-wrap">
-          <div class="resume-panel" id="resumePanel">
-            <div class="resume-header">
-              <strong>Currículo</strong>
-              <button class="resume-minimize" type="button" id="resumeMinimize" aria-label="Minimizar currículo">−</button>
+          <div class="email-popup" id="emailPopup" aria-live="polite">
+            <strong>Meu e-mail</strong>
+            <div class="email-popup-row">
+              <input
+                class="email-field"
+                id="emailField"
+                type="text"
+                value="isa.rodrigues01@hotmail.com"
+                readonly
+                aria-label="Meu endereço de e-mail"
+              />
+              <button class="copy-email-btn" id="copyEmailButton" type="button">Copiar e-mail</button>
             </div>
-            <div class="resume-body">
-              <div class="resume-frame">
-                <iframe src="Currículo_Isabella_Rodrigues.pdf" title="Currículo de Isabella Rodrigues"></iframe>
+            <span class="email-popup-note" id="emailCopyFeedback">Você pode selecionar o texto manualmente ou usar o botão para copiar.</span>
+          </div>
+
+          <div class="resume-wrap">
+            <div class="resume-panel" id="resumePanel">
+              <div class="resume-header">
+                <strong>Currículo</strong>
+                <button class="resume-minimize" type="button" id="resumeMinimize" aria-label="Minimizar currículo">−</button>
+              </div>
+              <div class="resume-body">
+                <div class="resume-frame">
+                  <iframe src="Currículo_Isabella_Rodrigues.pdf" title="Currículo de Isabella Rodrigues"></iframe>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-  </main>
+      </section>
+    </main>
 
-  <footer>
-    <div class="container">Isabella Rodrigues — Portfólio Front-End</div>
-  </footer>
+    <footer>
+      <div class="container">Isabella Rodrigues — Portfólio Front-End</div>
+    </footer>
+  </div>
 
   <script>
     const observer = new IntersectionObserver((entries) => {
@@ -1954,24 +2154,27 @@
 
     const cursorStars = document.getElementById('cursor-stars');
     let lastSpark = 0;
+    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
 
-    window.addEventListener('mousemove', (e) => {
-      const now = Date.now();
-      if (now - lastSpark < 24) return;
-      lastSpark = now;
+    if (!isTouchDevice) {
+      window.addEventListener('mousemove', (e) => {
+        const now = Date.now();
+        if (now - lastSpark < 24) return;
+        lastSpark = now;
 
-      const star = document.createElement('span');
-      star.className = 'cursor-star';
-      star.style.left = `${e.clientX}px`;
-      star.style.top = `${e.clientY}px`;
-      star.style.setProperty('--dx', `${(Math.random() - 0.5) * 40}px`);
-      star.style.setProperty('--dy', `${(Math.random() - 0.5) * 40 + 10}px`);
-      cursorStars.appendChild(star);
+        const star = document.createElement('span');
+        star.className = 'cursor-star';
+        star.style.left = `${e.clientX}px`;
+        star.style.top = `${e.clientY}px`;
+        star.style.setProperty('--dx', `${(Math.random() - 0.5) * 40}px`);
+        star.style.setProperty('--dy', `${(Math.random() - 0.5) * 40 + 10}px`);
+        cursorStars.appendChild(star);
 
-      setTimeout(() => {
-        star.remove();
-      }, 900);
-    });
+        setTimeout(() => {
+          star.remove();
+        }, 900);
+      });
+    }
 
     const galleriesData = [];
     const lightbox = document.getElementById('lightbox');
@@ -2041,10 +2244,13 @@
       slides.forEach((slide, slideIndex) => {
         const dot = document.createElement('span');
         dot.className = `gallery-dot${slideIndex === 0 ? ' active' : ''}`;
-        dot.addEventListener('click', () => {
+
+        dot.addEventListener('click', (e) => {
+          e.stopPropagation();
           galleryState.currentIndex = slideIndex;
           galleryState.updateGallery();
         });
+
         dotsWrap.appendChild(dot);
 
         slide.addEventListener('click', () => {
@@ -2054,33 +2260,55 @@
 
       galleryState.dots = Array.from(dotsWrap.querySelectorAll('.gallery-dot'));
 
-      prevBtn.addEventListener('click', () => {
+      prevBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
         galleryState.currentIndex = (galleryState.currentIndex - 1 + slides.length) % slides.length;
         galleryState.updateGallery();
       });
 
-      nextBtn.addEventListener('click', () => {
+      nextBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
         galleryState.currentIndex = (galleryState.currentIndex + 1) % slides.length;
         galleryState.updateGallery();
       });
 
       let startX = 0;
       let endX = 0;
+      let startY = 0;
+      let moved = false;
 
       gallery.addEventListener('touchstart', (e) => {
+        moved = false;
         startX = e.changedTouches[0].clientX;
+        startY = e.changedTouches[0].clientY;
+      }, { passive: true });
+
+      gallery.addEventListener('touchmove', (e) => {
+        const currentX = e.changedTouches[0].clientX;
+        const currentY = e.changedTouches[0].clientY;
+        if (Math.abs(currentX - startX) > 8 || Math.abs(currentY - startY) > 8) {
+          moved = true;
+        }
       }, { passive: true });
 
       gallery.addEventListener('touchend', (e) => {
         endX = e.changedTouches[0].clientX;
-        const delta = endX - startX;
-        if (Math.abs(delta) > 40) {
-          if (delta < 0) {
+        const endY = e.changedTouches[0].clientY;
+        const deltaX = endX - startX;
+        const deltaY = endY - startY;
+
+        if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY)) {
+          if (deltaX < 0) {
             galleryState.currentIndex = (galleryState.currentIndex + 1) % slides.length;
           } else {
             galleryState.currentIndex = (galleryState.currentIndex - 1 + slides.length) % slides.length;
           }
           galleryState.updateGallery();
+        } else if (!moved && e.target.closest('.project-slide')) {
+          const clickedSlide = slides.indexOf(e.target.closest('.project-slide'));
+          if (clickedSlide >= 0) {
+            openLightbox(galleryIndex, clickedSlide);
+          }
         }
       }, { passive: true });
 
@@ -2108,16 +2336,21 @@
 
     let lightboxTouchStartX = 0;
     let lightboxTouchEndX = 0;
+    let lightboxTouchStartY = 0;
 
     lightbox.addEventListener('touchstart', (e) => {
       lightboxTouchStartX = e.changedTouches[0].clientX;
+      lightboxTouchStartY = e.changedTouches[0].clientY;
     }, { passive: true });
 
     lightbox.addEventListener('touchend', (e) => {
       lightboxTouchEndX = e.changedTouches[0].clientX;
-      const delta = lightboxTouchEndX - lightboxTouchStartX;
-      if (Math.abs(delta) > 40) {
-        if (delta < 0) {
+      const lightboxTouchEndY = e.changedTouches[0].clientY;
+      const deltaX = lightboxTouchEndX - lightboxTouchStartX;
+      const deltaY = lightboxTouchEndY - lightboxTouchStartY;
+
+      if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY)) {
+        if (deltaX < 0) {
           changeLightboxSlide(1);
         } else {
           changeLightboxSlide(-1);
@@ -2126,15 +2359,53 @@
     }, { passive: true });
 
     const emailButton = document.getElementById('emailButton');
-    const emailToast = document.getElementById('emailToast');
-    let emailToastTimeout;
+    const emailPopup = document.getElementById('emailPopup');
+    const emailField = document.getElementById('emailField');
+    const copyEmailButton = document.getElementById('copyEmailButton');
+    const emailCopyFeedback = document.getElementById('emailCopyFeedback');
 
-    emailButton.addEventListener('click', () => {
-      emailToast.classList.add('show');
-      clearTimeout(emailToastTimeout);
-      emailToastTimeout = setTimeout(() => {
-        emailToast.classList.remove('show');
-      }, 2800);
+    function toggleEmailPopup() {
+      const isOpen = emailPopup.classList.contains('open');
+      emailPopup.classList.toggle('open', !isOpen);
+
+      if (!isOpen) {
+        setTimeout(() => {
+          emailField.focus();
+          emailField.select();
+          emailField.setSelectionRange(0, emailField.value.length);
+        }, 50);
+      }
+    }
+
+    async function copyEmail() {
+      const emailValue = emailField.value;
+
+      try {
+        await navigator.clipboard.writeText(emailValue);
+        emailCopyFeedback.textContent = 'E-mail copiado com sucesso.';
+      } catch (error) {
+        emailField.focus();
+        emailField.select();
+        emailField.setSelectionRange(0, emailField.value.length);
+
+        const copied = document.execCommand('copy');
+        emailCopyFeedback.textContent = copied
+          ? 'E-mail copiado com sucesso.'
+          : 'Não consegui copiar automaticamente. O texto já está selecionado para você copiar.';
+      }
+    }
+
+    emailButton.addEventListener('click', toggleEmailPopup);
+    copyEmailButton.addEventListener('click', copyEmail);
+
+    emailField.addEventListener('click', () => {
+      emailField.select();
+      emailField.setSelectionRange(0, emailField.value.length);
+    });
+
+    emailField.addEventListener('focus', () => {
+      emailField.select();
+      emailField.setSelectionRange(0, emailField.value.length);
     });
 
     const resumeToggle = document.getElementById('resumeToggle');
